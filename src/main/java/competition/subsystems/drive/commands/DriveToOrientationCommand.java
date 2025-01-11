@@ -1,16 +1,20 @@
 package competition.subsystems.drive.commands;
-
+import edu.wpi.first.math.geometry.Rotation2d;
 import javax.inject.Inject;
 
 import competition.subsystems.pose.PoseSubsystem;
 import xbot.common.command.BaseCommand;
 import competition.subsystems.drive.DriveSubsystem;
+import xbot.common.math.PIDManager;
+import xbot.common.subsystems.drive.control_logic.HeadingModule;
 
 import static java.lang.Math.abs;
 
-public class DriveToOrientationCommand extends BaseCommand {
 
+public class DriveToOrientationCommand extends BaseCommand {
     DriveSubsystem drive;
+    PIDManager pid;
+    HeadingModule headingModule;
     double currentPostion;
     double oldPostion;
     double goal;
@@ -36,7 +40,18 @@ public class DriveToOrientationCommand extends BaseCommand {
 
     @Override
     public void execute() {
-        currentPostion= pose.getCurrentHeading().getDegrees();
+        double power = headingModule.calculateHeadingPower(goal);
+        drive.tankDrive(-power, power);
+       /* Rotation2d goal2d;
+        goal2d= Rotation2d.fromDegrees(goal);
+        double heading = pose.getCurrentHeading().getRadians();
+        Rotation2d currentHeading= new Rotation2d(heading);
+        Rotation2d difference2d= currentHeading.minus(goal2d); //difference (goal);
+        double difference = difference2d.getDegrees();
+        double power = pid.calculate(0, difference);
+        drive.tankDrive(-power, power);*/
+
+        /*currentPostion= pose.getCurrentHeading().getDegrees();
         double postionDif= currentPostion - oldPostion;
         double range = this.goal-currentPostion;
         double power= range *.8 - postionDif*1.1;
@@ -51,7 +66,7 @@ public class DriveToOrientationCommand extends BaseCommand {
         // target position
 
         // How you do this is up to you. If you get stuck, ask a mentor or student for
-        // some hints!
+        // some hints!*/
 
     }
 
